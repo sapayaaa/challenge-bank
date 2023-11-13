@@ -1,16 +1,14 @@
 import { useState, useEffect } from 'react';
-// import axios from 'axios';
+import axios from 'react'
 import './App.css';
+import { useCallback } from 'react';
 
 function Transaction() {
   const [transactions, setTransactions] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  useEffect(() => {
-    fetchTransactions();
-  }, []); 
-//  **the fetchTransactions function is used to fetch the transactions from the server.**//
-async function fetchTransactions() {
+
+const fetchTransactions = useCallback(async () => {
   const response = await fetch('http://localhost:5000/transactions', {
     method: 'POST',
     headers: {
@@ -27,10 +25,17 @@ async function fetchTransactions() {
     // Error!
     console.error('Error adding transaction:', response.statusText);
   }
-}
+}, [transactions]);
 
 //  **the  handleFormSubmit - handle the form submission by creating a new transaction object
 //  , sending a POST request to the server,adds the new transaction and fetches the updated list.**//
+
+
+useEffect(() => {
+  fetchTransactions();
+}, [fetchTransactions]); 
+//  **the fetchTransactions function is used to fetch the transactions from the server.**// 
+
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     const form = event.target;
@@ -110,4 +115,4 @@ async function fetchTransactions() {
   );
 }
 
-export default Transaction
+export default Transaction;
