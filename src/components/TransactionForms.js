@@ -1,43 +1,24 @@
 import { useState, useEffect } from 'react';
-import axios from 'react'
 import './App.css';
-import { useCallback } from 'react';
 
 function Transaction() {
   const [transactions, setTransactions] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
+  useEffect(() => {
+    fetchTransactions();
+  }, []);
 
-const fetchTransactions = useCallback(async () => {
-const response = await fetch('https://my-json-server.typicode.com/sapayaaa/challenge-bank/transactions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(transactions),
-  });
+  const fetchTransactions = () => {
+    fetch('https://my-json-server.typicode.com/sapayaaa/challenge-bank/transactions')
+      .then((response) => response.json())
+      .then((transactions) => setTransactions(transactions))
+      .catch((error) => console.error('Error fetching transactions:', error.statusText));
+  };
 
-  if (response.ok) {
-    // Success!
-    const transactions = await response.json();
-    setTransactions(transactions);
-  } else {
-    // Error!
-    console.error('Error adding transaction:', response.statusText);
-  }
-}, [transactions]);
-
-//  **the  handleFormSubmit - handle the form submission by creating a new transaction object
-//  , sending a POST request to the server,adds the new transaction and fetches the updated list.**//
-
-
-useEffect(() => {
-  fetchTransactions();
-}, [fetchTransactions]); 
-//  **the fetchTransactions function is used to fetch the transactions from the server.**// 
-
-  const handleFormSubmit = async (event) => {
+  const handleFormSubmit = (event) => {
     event.preventDefault();
+
     const form = event.target;
     const newTransaction = {
       date: form.date.value,
@@ -45,33 +26,35 @@ useEffect(() => {
       category: form.category.value,
       amount: parseFloat(form.amount.value),
     };
-// axios allows you to set default header intercept request and respond whereas
-//  fetch has a simpler API that lacks some of these feature requiring add libs
-    try {
-      await axios.post('http://localhost:5000/transactions', newTransaction);
-      fetchTransactions();
-    } catch (error) {
-      console.error('Error adding transaction:', error);
-    }
 
-    form.reset();
+    fetch('https://my-json-server.typicode.com/sapayaaa/challenge-bank/transactions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newTransaction),
+    })
+      .then((response) => response.json())
+      .then(() => {
+        fetchTransactions();
+        form.reset();
+      })
+      .catch((error) => console.error('Error adding transaction:', error.statusText));
   };
-
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value.toLowerCase());
   };
-// handleDelete is used to delete a transaction by id and then fetches the updated list.//
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`http://localhost:5000/transactions/${id}`);
-      fetchTransactions();
-    } catch (error) {
-      console.error('Error deleting transaction:', error);
-    }
+
+  const handleDelete = (id) => {
+    fetch(`https://my-json-server.typicode.com/sapayaaa/challenge-bank/transactions/${id}`, {
+      method: 'DELETE',
+    })
+      .then((response) => response.json())
+      .then(() => fetchTransactions())
+      .catch((error) => console.error('Error deleting transaction:', error.statusText));
   };
 
-  // filter each transaction
   let filteredTransactions = [];
   if (transactions) {
     filteredTransactions = transactions.filter(
@@ -80,7 +63,7 @@ useEffect(() => {
         transaction.category.toLowerCase().includes(searchTerm)
     );
   }
-//  **the code block is used to display the transactions in a list.**//
+
   return (
     <div className='app-container'>
       <h2>Add Transaction</h2>
