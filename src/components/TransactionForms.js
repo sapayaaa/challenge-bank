@@ -9,7 +9,7 @@ function Transaction() {
 
 
 const fetchTransactions = useCallback(async () => {
-  const response = await fetch('http://localhost:5000/transactions', {
+const response = await fetch('https://my-json-server.typicode.com/sapayaaa/challenge-bank/transactions', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
