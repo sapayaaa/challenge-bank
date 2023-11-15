@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/challenge-bank/static/css/main.179b8a1f.css",
+    "main.js": "/challenge-bank/static/js/main.745bb11f.js",
+    "static/js/787.f1562ff4.chunk.js": "/challenge-bank/static/js/787.f1562ff4.chunk.js",
+    "index.html": "/challenge-bank/index.html",
+    "main.179b8a1f.css.map": "/challenge-bank/static/css/main.179b8a1f.css.map",
+    "main.745bb11f.js.map": "/challenge-bank/static/js/main.745bb11f.js.map",
+    "787.f1562ff4.chunk.js.map": "/challenge-bank/static/js/787.f1562ff4.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.179b8a1f.css",
+    "static/js/main.745bb11f.js"
+  ]
+}
