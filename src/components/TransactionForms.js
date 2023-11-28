@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import './App.css';
 
 function Transaction() {
-  const [transactions, setTransactions] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [transactions, setTransactions] = useState([]); // Changed initial state to []
+  const [searchTerm, setSearchTerm] = useState(''); // Added state variable for search term
 
   useEffect(() => {
     fetchTransactions();
@@ -35,15 +35,16 @@ function Transaction() {
       body: JSON.stringify(newTransaction),
     })
       .then((response) => response.json())
-      .then(() => {
-        fetchTransactions();
+      .then((createdTransaction) => {
+        // Update transactions state directly with the new transaction
+        setTransactions([...transactions, createdTransaction]);
         form.reset();
       })
       .catch((error) => console.error('Error adding transaction:', error.statusText));
   };
 
   const handleSearch = (event) => {
-    setSearchTerm(event.target.value.toLowerCase());
+    setSearchTerm(event.target.value.toLowerCase()); // Set search term using state variable
   };
 
   const handleDelete = (id) => {
@@ -51,13 +52,16 @@ function Transaction() {
       method: 'DELETE',
     })
       .then((response) => response.json())
-      .then(() => fetchTransactions())
+      .then(() => {
+        // Update transactions state by filtering out the deleted transaction
+        setTransactions(transactions.filter((transaction) => transaction.id !== id));
+      })
       .catch((error) => console.error('Error deleting transaction:', error.statusText));
   };
 
   let filteredTransactions = [];
-  if (transactions) {
-    filteredTransactions = transactions.filter(
+  if (transactions.length > 0) {
+    filteredTransactions = transactions.filter( // Use search term from state variable
       (transaction) =>
         transaction.description.toLowerCase().includes(searchTerm) ||
         transaction.category.toLowerCase().includes(searchTerm)
